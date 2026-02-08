@@ -18,6 +18,25 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  nexus-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["./nexus-mcp"]
+    ports:
+      - "8081:8081"
+    environment:
+      NEXUS_MONGO_URI: "mongodb://mongo:27017"
+      NEXUS_DATABASE_NAME: "nexus"
+      NEXUS_COLLECTION_NAME: "snapshots"
+      NEXUS_MCP_TRANSPORT: "sse"
+      NEXUS_MCP_SSE_ADDR: ":8081"
+      NEXUS_MCP_SERVER_NAME: "nexus-mcp"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
   mongo:
     image: mongo:7
     ports:

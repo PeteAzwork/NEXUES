@@ -1,11 +1,18 @@
-.PHONY: build test test-unit lint docker-build docker-run docker-down clean
+.PHONY: build build-mcp test test-unit lint docker-build docker-run docker-down clean
 
 APP_NAME := nexus
+MCP_NAME := nexus-mcp
 BUILD_DIR := bin
 
 build:
 	@echo "Building $(APP_NAME)..."
 	go build -ldflags="-s -w" -o $(BUILD_DIR)/$(APP_NAME) ./cmd/nexus
+
+build-mcp:
+	@echo "Building $(MCP_NAME)..."
+	go build -ldflags="-s -w" -o $(BUILD_DIR)/$(MCP_NAME) ./cmd/nexus-mcp
+
+build-all: build build-mcp
 
 test:
 	@echo "Running all tests..."
@@ -14,6 +21,10 @@ test:
 test-unit:
 	@echo "Running unit tests..."
 	go test ./internal/... -v -count=1 -race
+
+test-mcp:
+	@echo "Running MCP tests..."
+	go test ./internal/mcp/... -v -count=1 -race
 
 test-coverage:
 	@echo "Running tests with coverage..."
@@ -39,6 +50,14 @@ docker-down:
 
 docker-logs:
 	docker compose logs -f nexus
+
+run-mcp:
+	@echo "Running MCP server (stdio)..."
+	NEXUS_MCP_TRANSPORT=stdio go run ./cmd/nexus-mcp
+
+run-mcp-sse:
+	@echo "Running MCP server (SSE on :8081)..."
+	NEXUS_MCP_TRANSPORT=sse go run ./cmd/nexus-mcp
 
 clean:
 	@echo "Cleaning..."

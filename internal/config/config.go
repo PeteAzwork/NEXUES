@@ -16,6 +16,12 @@ type Config struct {
 	ReadTimeout  int    `envconfig:"READ_TIMEOUT" default:"10"`
 	WriteTimeout int    `envconfig:"WRITE_TIMEOUT" default:"10"`
 	IdleTimeout  int    `envconfig:"IDLE_TIMEOUT" default:"120"`
+
+	// MCP server configuration
+	MCPTransport string `envconfig:"MCP_TRANSPORT" default:"stdio"`
+	MCPSSEAddr   string `envconfig:"MCP_SSE_ADDR" default:":8081"`
+	MCPName      string `envconfig:"MCP_SERVER_NAME" default:"nexus-mcp"`
+	MCPVersion   string `envconfig:"MCP_SERVER_VERSION" default:"1.0.0"`
 }
 
 // Load reads configuration from environment variables.
